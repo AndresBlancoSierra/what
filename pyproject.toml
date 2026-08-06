@@ -1,0 +1,26 @@
+[project]
+name = "what"
+version = "0.1.0"
+description = "WHAT? - Language learning through songs"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.30.0",
+    "sqlalchemy[asyncio]>=2.0.0",
+    "aiosqlite>=0.20.0",
+    "pydantic>=2.0.0",
+    "yt-dlp>=2024.0.0",
+    "PyYAML>=6.0",
+    "httpx>=0.27.0",
+    "beautifulsoup4>=4.12",
+    "loguru>=0.7.0",
+    "faster-whisper>=1.2.1",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"

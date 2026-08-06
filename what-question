@@ -1,0 +1,74 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+PROJECT="$HOME/Proyects/what"
+FRONTEND="$PROJECT/what-app"
+BACKEND_PORT="${WHAT_BACKEND_PORT:-8001}"
+FRONTEND_PORT="${WHAT_FRONTEND_PORT:-5174}"
+BACKEND_LOG="$PROJECT/.what-backend.log"
+
+# Cargar secretos locales (gitignored) sin sobreescribir envs existentes
+if [ -f "$PROJECT/.env" ]; then
+  set -a
+  # shellcheck disable=SC1091
+  source "$PROJECT/.env"
+  set +a
+fi
+
+cleanup() {
+  echo ""
+  echo "  Stopping WHAT?..."
+  kill "$BACKEND_PID" "$FRONTEND_PID" 2>/dev/null || true
+  wait "$BACKEND_PID" "$FRONTEND_PID" 2>/dev/null || true
+  echo "  Done."
+}
+trap cleanup EXIT INT TERM
+
+for port in "$BACKEND_PORT" "$FRONTEND_PORT"; do
+  pids=$(lsof -ti :"$port" 2>/dev/null || true)
+  if [ -n "$pids" ]; then
+    echo "  Killing existing process on port $port..."
+    kill $pids 2>/dev/null || true
+    sleep 0.5
+  fi
+done
+
+echo ""
+echo "  ██╗  ██╗██╗  ██╗ █████╗ ████████╗"
+echo "  ██║  ██║██║  ██║██╔══██╗╚══██╔══╝"
+echo "  ███████║███████║███████║   ██║   "
+echo "  ██╔══██║██╔══██║██╔══██║   ██║   "
+echo "  ██║  ██║██║  ██║██║  ██║   ██║   "
+echo "  ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝   "
+echo ""
+echo "  Backend  → http://localhost:$BACKEND_PORT"
+echo "  Frontend → http://localhost:$FRONTEND_PORT"
+echo "  API docs → http://localhost:$BACKEND_PORT/docs"
+echo ""
+
+cd "$PROJECT"
+uv run uvicorn what.api:app --host 127.0.0.1 --port "$BACKEND_PORT" >"$BACKEND_LOG" 2>&1 &
+BACKEND_PID=$!
+
+ready=false
+for i in $(seq 1 60); do
+  if curl -s "http://127.0.0.1:$BACKEND_PORT/api/songs" &>/dev/null; then
+    ready=true
+    break
+  fi
+  sleep 1
+done
+
+if [ "$ready" = false ]; then
+  echo "  ⚠ Backend failed to start. Check: tail -f $BACKEND_LOG"
+  exit 1
+fi
+
+cd "$FRONTEND"
+npm run dev -- --port "$FRONTEND_PORT" &>/dev/null &
+FRONTEND_PID=$!
+
+echo "  Press Ctrl+C to stop."
+echo ""
+
+wait

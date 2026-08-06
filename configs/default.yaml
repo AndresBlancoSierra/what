@@ -1,0 +1,18 @@
+genius:
+  access_token: ""
+
+whisper:
+  model_size: "large-v3"
+  device: "auto"
+  compute_type: "float16"
+
+audio:
+  sample_rate: 16000
+  format: "wav"
+
+storage:
+  data_dir: "data/songs"
+  anki_dir: "~/Documents/Anki"
+
+database:
+  url: "sqlite+aiosqlite:///data/what.db"

@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.ruff_cache/
+.venv/
+
+# Runtime data
+data/
+*.log
+.what-backend.log
+
+# Secrets
+.env
+configs/local.yaml
+
+# Node
+node_modules/
+what-app/node_modules/
+what-app/dist/
