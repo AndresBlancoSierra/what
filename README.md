@@ -1,3 +1,9 @@
+<p align="center">
+  <a href="https://github.com/AndresBlancoSierra/what">
+    <img src="https://raw.githubusercontent.com/AndresBlancoSierra/what/main/profile.svg" alt="WHAT? — what@arch">
+  </a>
+</p>
+
 # WHAT? — Aprende idiomas con canciones
 
 WHAT? es una app de **aprendizaje de idiomas a través de música**: busca una
